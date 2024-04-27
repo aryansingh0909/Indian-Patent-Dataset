@@ -1,6 +1,5 @@
 <h1 align="center">Indian Patent Dataset</h1>
 
-
 <p align="center">A comprehensive dataset of all the patents filed in India for the years 2010, 2011, and 2019.</p>
 
 ## Overview
@@ -47,6 +46,8 @@ The dataset comprises individual instances representing patent applications file
 
 The data associated with each instance was acquired by scraping directly from the Indian Patent Advanced Search System using automation tools such as Selenium and Python. The scraping script scraping_main.py is provided in the repository for reference.
 
+To run the scraping code download the scraping_main.py and chromedriver-win64.zip.
+
 ## Preprocessing
 
 The dataset underwent some basic preprocessing, including cleaning strings and removing unnecessary symbols, to ensure data quality and consistency.
@@ -72,4 +73,3 @@ The dataset will be periodically updated to correct labeling errors, add new ins
 ## Contact
 
 For questions or inquiries regarding the dataset, please contact [Aryan Singh] at [aryansinghmain09@gmail.com].
-
