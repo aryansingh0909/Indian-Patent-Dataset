@@ -44,7 +44,7 @@ The dataset comprises individual instances representing patent applications file
 
 ## Collection Process
 
-The data associated with each instance was acquired by scraping directly from the Indian Patent Advanced Search System using automation tools such as Selenium and Python. The scraping script scraping_main.py is provided in the repository for reference.
+The data associated with each instance was acquired by scraping directly from the [Indian Patent Advanced Search System](https://iprsearch.ipindia.gov.in/publicsearch) using automation tools such as Selenium and Python. The scraping script scraping_main.py is provided in the repository for reference.
 
 To run the scraping code download the scraping_main.py and chromedriver-win64.zip.
 
