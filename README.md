@@ -27,8 +27,11 @@ source .venv/bin/activate
 # run the script
 python Scripts/scraping_main.py --month=1 --year=2024
 
-# skip application status (this takes time)
+# skip application status as it takes time
 python Scripts/scraping_main.py --month=1 --year=2024 --skip-status
+
+# run in headless mode
+python Scripts/scraping_main.py --month=1 --year=2024 --skip-status --headless
 ```
 
 ## Composition

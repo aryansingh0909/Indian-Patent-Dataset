@@ -4,3 +4,4 @@ pandas
 ipython
 tqdm
 ipdb
+pillow

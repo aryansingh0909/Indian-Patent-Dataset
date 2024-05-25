@@ -1,6 +1,12 @@
+import platform
+import time
+from PIL import Image
+from io import BytesIO
+import os
 from tqdm import tqdm
 from selenium import webdriver
 
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from chromedriver_py import binary_path  # this will get you the path variable
 
@@ -8,7 +14,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import datetime as dt
-import time
 import pandas as pd
 
 import argparse
@@ -19,6 +24,7 @@ def _parse_args():
     parser.add_argument("--month", type=int, default=1)
     parser.add_argument("--year", type=int, default=2024)
     parser.add_argument("--skip-status", action="store_true")
+    parser.add_argument("--headless", action="store_true")
 
     args = parser.parse_args()
     return args
@@ -33,17 +39,38 @@ def _parse_dates(args):
     return from_date, to_date
 
 
-def _get_driver():
+def _get_driver(headless):
     options = webdriver.ChromeOptions()
     options.add_argument("log-level=3")
     options.add_argument("--ignore-certificate-errors-spki-list")
     options.add_argument("--ignore-ssl-errors")
-    # options.add_argument('--headless')
     options.add_argument("--disable-gpu")
+    if headless:
+        options.add_argument("--headless")
+
     service_object = Service(binary_path)
     driver = webdriver.Chrome(service=service_object, options=options)
-    driver.maximize_window()
     return driver
+
+
+def _get_captcha_text(captcha_el):
+    # take screenshot of captcha and open it
+    img_b64 = captcha_el.screenshot_as_png
+
+    # save the image
+    img = Image.open(BytesIO(img_b64))
+    img.save("captcha.png")
+
+    # open image
+    if platform.system() == "Windows":
+        os.startfile("captcha.png")
+    elif platform.system() == "Darwin":  # for macOS
+        os.system("open captcha.png")
+    else:
+        os.system("xdg-open captcha.png")
+
+    text = input("Please provide the text of captcha: ")
+    return text
 
 
 def _fill_search_page(driver, from_date, to_date):
@@ -57,11 +84,16 @@ def _fill_search_page(driver, from_date, to_date):
     driver.find_element(By.ID, "FromDate").send_keys(f"{from_date:%m-%d-%Y}")
     driver.find_element(By.ID, "ToDate").send_keys(f"{to_date:%m-%d-%Y}")
 
-    captcha = driver.find_element(By.XPATH, '//*[@id="CaptchaText"]')
-    driver.execute_script("arguments[0].scrollIntoView();", captcha)
-    captcha.click()
+    captcha = driver.find_element(By.CSS_SELECTOR, "img#Captcha")
+    captcha_text = _get_captcha_text(captcha)
 
-    time.sleep(9)
+    captcha_text_el = driver.find_element(By.XPATH, '//*[@id="CaptchaText"]')
+    driver.execute_script("arguments[0].scrollIntoView();", captcha_text_el)
+    captcha_text_el.click()
+    captcha_text_el.send_keys(captcha_text)
+    captcha_text_el.send_keys(Keys.RETURN)
+
+    time.sleep(3)
 
 
 def _get_result_count(driver):
@@ -337,7 +369,7 @@ if __name__ == "__main__":
     args = _parse_args()
     from_date, to_date = _parse_dates(args)
 
-    driver = _get_driver()
+    driver = _get_driver(args.headless)
     _fill_search_page(driver, from_date, to_date)
     page_count, row_count = _get_result_count(driver)
 
@@ -350,9 +382,9 @@ if __name__ == "__main__":
         for row in rows[1:]:
             row_data = _get_row_data(driver, row, args.skip_status)
             df.loc[len(df)] = row_data
+            progress.update(1)
         _save_df(df)
         _goto_next_page(driver)
-        progress.update(1)
 
     progress.close()
     driver.quit()
