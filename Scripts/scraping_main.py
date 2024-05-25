@@ -1,13 +1,8 @@
-# py -3.10 (file_name.py) to run code on specific python version
 from selenium import webdriver
 
-# (pip install selenium)
 from selenium.webdriver.chrome.service import Service
 from chromedriver_py import binary_path  # this will get you the path variable
 
-# (pip install chromedriver-py)
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -16,11 +11,24 @@ import time
 import pandas as pd
 import math
 
-from_date = dt.date(2023, 1, 1)
+# parse arguments
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--month", type=int, default=1)
+parser.add_argument("--year", type=int, default=2024)
+parser.add_argument("--skip-status", action="store_true")
+
+args = parser.parse_args()
+
+
+from_date = dt.date(args.year, args.month, 1)
 # get last day of month
 to_date = (from_date.replace(day=1) + dt.timedelta(days=32)).replace(
     day=1
 ) - dt.timedelta(days=1)
+
+print(f"Fetching data from {from_date} to {to_date}")
 
 options = webdriver.ChromeOptions()
 options.add_argument("log-level=3")
