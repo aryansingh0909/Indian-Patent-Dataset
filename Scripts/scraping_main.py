@@ -333,36 +333,16 @@ def _get_row_data(driver, row, skip_status):
 
 def _save_df(df):
     out_path_csv = f"{from_date:%b%Y}.csv"
-    out_path_xlsx = f"{from_date:%b%Y}.xlsx"
-    writer = pd.ExcelWriter(out_path_xlsx, engine="xlsxwriter")
-    df.to_excel(writer, index=False, sheet_name="Sheet1")
-    writer.save()
     df.to_csv(out_path_csv, index=False)
 
 
 def _goto_next_page(driver):
-    link = driver.find_element(
-        By.XPATH, '//*[@id="header"]/div[4]/div/div[1]/form/div/button[3]'
-    )
-    try_count3 = 0
-    max_tries3 = 10
-    while try_count3 < max_tries3:
-        try:
-            link.click()
-            wait = WebDriverWait(driver, 10)
-            p = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Selected")))
-            current_page = int(p.text)
-            # print("Current page: ", current_page)
-            break
-        except Exception:
-            if try_count3 == max_tries3:
-                print(
-                    "Max tries reached for clicking on next page button and page not loading."
-                )
-                break
-            print("Clicked on next page but not loaded. Refreshing page.")
-            driver.refresh()
-            try_count3 += 1
+    link = driver.find_element(By.CSS_SELECTOR, 'button.next[name="page"]')
+    link.click()
+    wait = WebDriverWait(driver, 10)
+    p = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Selected")))
+    current_page = int(p.text)
+    print("Current page: ", current_page)
 
 
 if __name__ == "__main__":
@@ -377,9 +357,9 @@ if __name__ == "__main__":
 
     # show progress bar
     progress = tqdm(total=row_count)
-    for page_number in range(page_count):
-        rows = driver.find_elements(By.CSS_SELECTOR, "#tableData tr")
-        for row in rows[1:]:
+    for _ in range(page_count - 1):
+        rows = driver.find_elements(By.CSS_SELECTOR, "#tableData tbody > tr")
+        for row in rows:
             row_data = _get_row_data(driver, row, args.skip_status)
             df.loc[len(df)] = row_data
             progress.update(1)
