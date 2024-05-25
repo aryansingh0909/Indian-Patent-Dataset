@@ -358,7 +358,7 @@ if __name__ == "__main__":
     # show progress bar
     progress = tqdm(total=row_count)
     for _ in range(page_count - 1):
-        rows = driver.find_elements(By.CSS_SELECTOR, "#tableData tbody > tr")
+        rows = driver.find_elements(By.CSS_SELECTOR, "#tableData > tbody > tr")
         for row in rows:
             row_data = _get_row_data(driver, row, args.skip_status)
             df.loc[len(df)] = row_data
