@@ -76,7 +76,7 @@ To run the scraping code download the scraping_main.py and chromedriver-win64.zi
 
 The dataset underwent some basic preprocessing, including cleaning strings and removing unnecessary symbols, to ensure data quality and consistency.
 
-## Uses
+## Usage
 
 The dataset can be used for various purposes, including:
 
