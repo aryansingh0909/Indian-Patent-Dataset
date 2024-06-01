@@ -10,6 +10,30 @@ The Indian Patent Dataset provides detailed information about each patent applic
 
 The dataset was created to provide researchers, policymakers, businesses, legal professionals, and academics with valuable insights into the patent landscape in India. It aims to facilitate research and analysis, inform policy decisions, support business intelligence efforts, ensure legal and regulatory compliance, and enable academic research on innovation and technology transfer.
 
+## Usage
+
+```bash
+# clone the repo
+git clone path/to/git-repo
+cd Indian-Patent-Dataset
+
+# create virtual env
+python3 -m venv .venv
+
+# install requirements
+pip install -r requirements.txt
+source .venv/bin/activate
+
+# run the script
+python Scripts/scraping_main.py --month=1 --year=2024
+
+# skip application status as it takes time
+python Scripts/scraping_main.py --month=1 --year=2024 --skip-status
+
+# run in headless mode
+python Scripts/scraping_main.py --month=1 --year=2024 --skip-status --headless
+```
+
 ## Composition
 
 The dataset comprises individual instances representing patent applications filed in India. Each instance includes various features, such as:

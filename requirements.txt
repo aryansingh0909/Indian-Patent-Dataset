@@ -1,0 +1,7 @@
+selenium
+chromedriver-py
+pandas
+ipython
+tqdm
+ipdb
+pillow
